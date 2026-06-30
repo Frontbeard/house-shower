@@ -80,6 +80,8 @@ strong { font-weight: 600; color: var(--ink); }
   width: min(380px, 88vw);
   height: 250px;
   transform-style: preserve-3d;
+  perspective: 900px;
+  perspective-origin: 50% 42%;
 }
 
 .envelope {
@@ -89,7 +91,6 @@ strong { font-weight: 600; color: var(--ink); }
   -webkit-tap-highlight-color: transparent;
   border-radius: 8px;
   overflow: visible;
-  perspective: 800px;
 }
 .envelope:focus-visible { outline: 2px solid var(--gold); outline-offset: 8px; border-radius: 8px; }
 .envelope__shadow {
@@ -109,7 +110,7 @@ strong { font-weight: 600; color: var(--ink); }
   border-radius: 6px; z-index: 1;
 }
 .envelope__card {
-  position: absolute; left: 10%; right: 10%; bottom: 16%; height: 48%;
+  position: absolute; left: 10%; right: 10%; bottom: 14%; height: 50%;
   z-index: 2;
   transform-origin: center bottom;
   opacity: 0; visibility: hidden; pointer-events: none;
@@ -174,20 +175,22 @@ strong { font-weight: 600; color: var(--ink); }
   clip-path: polygon(0 100%, 50% 10%, 100% 100%); border-radius: 0 0 8px 8px;
 }
 .envelope__flap-wrap {
-  position: absolute; top: 0; left: 0; right: 0; height: 58%;
+  position: absolute; top: 0; left: 0; right: 0; height: 56%;
   z-index: 5;
   transform-style: preserve-3d;
   transform-origin: top center;
   transform: rotateX(0deg);
+  backface-visibility: hidden;
 }
 .envelope__flap {
   width: 100%; height: 100%;
-  background: linear-gradient(180deg, #e8dcc8 0%, #d8c8b0 100%);
+  background: linear-gradient(180deg, #ebe1d0 0%, #d8c8b0 55%, #cfc0a8 100%);
   clip-path: polygon(0 0, 50% 100%, 100% 0);
   border-radius: 8px 8px 0 0;
   border-top: 1px solid rgba(255,255,255,0.55);
   backface-visibility: hidden;
-  box-shadow: 0 2px 8px rgba(44,38,32,0.08);
+  box-shadow: 0 3px 10px rgba(44,38,32,0.1);
+  transform: translateZ(1px);
 }
 .envelope__seal {
   position: absolute; top: calc(46% - 27px); left: calc(50% - 27px);

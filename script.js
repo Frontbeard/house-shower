@@ -205,16 +205,26 @@ function initParticles() {
 }
 
 /* ─── Envelope float ─── */
+let envelopeFloatTween = null;
+
 function floatEnvelope() {
   const unit = document.getElementById("envelope-unit");
   if (!unit || !window.gsap) return;
-  gsap.to(unit, {
-    y: -8,
-    duration: 2.8,
+  envelopeFloatTween?.kill();
+  envelopeFloatTween = gsap.to(unit, {
+    y: -6,
+    duration: 3.2,
     ease: "sine.inOut",
     yoyo: true,
     repeat: -1
   });
+}
+
+function stopEnvelopeFloat() {
+  envelopeFloatTween?.kill();
+  envelopeFloatTween = null;
+  const unit = document.getElementById("envelope-unit");
+  if (unit && window.gsap) gsap.set(unit, { y: 0 });
 }
 
 /* ─── Open envelope (GSAP timeline) ─── */
@@ -302,8 +312,8 @@ function playOpenFallback() {
   scene?.classList.remove("is-hidden");
   scene?.classList.add("is-opening");
   if (hint) hint.style.opacity = "0";
-  if (seal) { seal.style.opacity = "0"; seal.style.transform = "scale(0)"; }
-  if (flap) flap.style.transform = "rotateX(180deg)";
+  if (seal) { seal.style.opacity = "0"; seal.style.transform = "scale(0) rotate(20deg)"; }
+  if (flap) flap.style.transform = "rotateX(-165deg)";
   if (face) face.style.opacity = "0";
   if (card) {
     card.style.visibility = "visible";
@@ -318,6 +328,7 @@ function openEnvelope() {
   if (isAnimating) return;
   scrollToHero();
   isAnimating = true;
+  stopEnvelopeFloat();
 
   const scene = document.getElementById("envelope-scene");
   const unit = document.getElementById("envelope-unit");
@@ -349,59 +360,73 @@ function openEnvelope() {
   openTimeline?.kill();
   resetEnvelopeVisuals();
 
-  gsap.set(unit, { y: 0, opacity: 1 });
+  const cardLift = unit && unit.offsetHeight < 230 ? -175 : -210;
+
+  gsap.set(unit, { y: 0, opacity: 1, scale: 1 });
   gsap.set(env, { opacity: 1, y: 0, scale: 1 });
-  gsap.set(seal, { scale: 1, opacity: 1 });
-  gsap.set(flap, { rotationX: 0, transformOrigin: "top center" });
+  gsap.set(seal, { scale: 1, opacity: 1, rotation: 0 });
+  gsap.set(flap, {
+    rotationX: 0,
+    transformOrigin: "top center",
+    transformPerspective: 900
+  });
   gsap.set(face, { opacity: 1 });
   gsap.set(folds, { opacity: 1 });
-  gsap.set(shadow, { opacity: 1 });
-  gsap.set(card, { visibility: "hidden", opacity: 0, y: 12, scale: 0.97, zIndex: 2 });
+  gsap.set(shadow, { opacity: 1, scale: 1 });
+  gsap.set(card, { visibility: "hidden", opacity: 0, y: 8, scale: 0.96, zIndex: 2 });
   gsap.set(scene, { opacity: 1 });
   gsap.set(hint, { opacity: 1 });
-
-  const cardLift = unit && unit.offsetHeight < 230 ? -195 : -235;
 
   openTimeline = gsap.timeline({
     onComplete: () => finishOpen(initScrollAnimations)
   });
 
-  /* 1. Sello se rompe */
-  openTimeline.to(hint, { opacity: 0, duration: 0.22 }, 0);
+  /* 1 — Sello */
+  openTimeline.to(hint, { opacity: 0, duration: 0.2 }, 0);
   openTimeline.to(seal, {
-    scale: 0, opacity: 0, duration: 0.4, ease: "back.in(2)"
-  }, 0.08);
+    scale: 0,
+    opacity: 0,
+    rotation: 24,
+    duration: 0.45,
+    ease: "back.in(2.2)"
+  }, 0.05);
 
-  /* 2. Solapa se abre hacia atrás (el sobre SE ABRE) */
+  /* 2 — Solapa hacia atrás */
   openTimeline.to(flap, {
-    rotationX: 180,
-    duration: 1,
-    ease: "power2.inOut",
-    transformOrigin: "top center"
-  }, 0.2);
+    rotationX: -168,
+    duration: 1.05,
+    ease: "power3.inOut"
+  }, 0.18);
 
-  /* 3. Tapa frontal se va — se ve el interior */
-  openTimeline.to(face, { opacity: 0, duration: 0.35 }, 0.55);
+  /* 3 — Tapa frontal cede */
+  openTimeline.to(face, { opacity: 0, duration: 0.3, ease: "power1.out" }, 0.42);
 
-  /* 4. Carta aparece DENTRO y sale hacia arriba */
-  openTimeline.set(card, { visibility: "visible", zIndex: 8 }, 0.75);
-  openTimeline.to(card, { opacity: 1, duration: 0.25 }, 0.75);
+  /* 4 — Carta sale */
+  openTimeline.set(card, { visibility: "visible", zIndex: 12 }, 0.58);
+  openTimeline.to(card, { opacity: 1, duration: 0.3, ease: "power1.out" }, 0.58);
   openTimeline.to(card, {
     y: cardLift,
-    scale: 1.04,
-    duration: 1.15,
+    scale: 1.03,
+    duration: 1.05,
     ease: "power2.out"
-  }, 0.8);
+  }, 0.62);
 
-  /* 5. Sobre se desvanece recién cuando la carta ya salió */
-  openTimeline.to(folds, { opacity: 0, duration: 0.4 }, 1.35);
+  /* 5 — Cierre suave hacia el hero */
+  openTimeline.to(folds, { opacity: 0, duration: 0.35 }, 1.25);
   openTimeline.to([env, shadow], {
-    y: 35, opacity: 0, duration: 0.55, ease: "power2.in"
-  }, 1.45);
-  openTimeline.to(card, {
-    opacity: 0, y: cardLift - 50, scale: 1.08, duration: 0.35
-  }, 1.75);
-  openTimeline.to(scene, { opacity: 0, duration: 0.4 }, 1.85);
+    y: 28,
+    opacity: 0,
+    duration: 0.5,
+    ease: "power2.in"
+  }, 1.32);
+  openTimeline.to(unit, {
+    opacity: 0,
+    y: -18,
+    scale: 1.05,
+    duration: 0.5,
+    ease: "power2.in"
+  }, 1.48);
+  openTimeline.to(scene, { opacity: 0, duration: 0.35, ease: "power1.in" }, 1.55);
 }
 
 window.openInvitation = openEnvelope;
