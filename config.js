@@ -25,6 +25,16 @@ window.CONFIG = {
   },
   whatsappNumber: "5491152400334",
   regalameUrl: "https://regalame.com.ar",
+  contribucionUrl:
+    "https://www.mercadolibre.com.ar/lavarropas-bgh-inverter-carga-frontal-6kg-bwfe06s24ar-color-gris-oscuro/p/MLA51863938",
+  transferencia: {
+    titular: "Martina Alejandra Renó",
+    cuil: "27-41327355-8",
+    cvu: "0000003100014771927048",
+    alias: "martina.reno.mp",
+    banco: "Mercado Pago",
+    nota: "Transferí el monto que quieras. Cualquier aporte suma ¡gracias!"
+  },
   mercadoLibreListUrl: "",
   musicUrl: "",
   heroPhoto: "assets/fotos/IMAGEN-11.jpeg",
@@ -46,102 +56,177 @@ window.CONFIG = {
   ],
   wishlist: [
     {
-      id: "juego-toallas",
-      name: "Juego de toallas de baño",
-      category: "bano",
-      price: "$25.000",
-      image: "https://images.unsplash.com/photo-1620626011761-996317b8d101?w=400&h=400&fit=crop",
-      url: "https://listado.mercadolibre.com.ar/juego-toallas-bano",
-      priority: "alta"
-    },
-    {
-      id: "set-cubiertos",
-      name: "Set de cubiertos de acero inoxidable",
-      category: "cocina",
-      price: "$18.500",
-      image: "https://images.unsplash.com/photo-1603199506016-b9a594bf2846?w=400&h=400&fit=crop",
-      url: "https://listado.mercadolibre.com.ar/set-cubiertos-acero-inoxidable",
-      priority: "alta"
-    },
-    {
-      id: "sarten-antiadherente",
-      name: "Sartén antiadherente 28 cm",
-      category: "cocina",
-      price: "$32.000",
-      image: "https://images.unsplash.com/photo-1585664624852-8f60cdf3b147?w=400&h=400&fit=crop",
-      url: "https://listado.mercadolibre.com.ar/sarten-antiadherente-28cm",
+      id: "plancha-philco",
+      name: "Plancha a vapor Philco PVP1117PI 1200W",
+      category: "hogar",
+      price: "$39.999",
+      image: "https://http2.mlstatic.com/D_Q_NP_718452-MLA99449318258_112025-F.jpg",
+      url: "https://www.mercadolibre.com.ar/plancha-a-vapor-philco-pvp1117pi-1200w-regulador-temperatura-color-blanco/p/MLA15800941",
       priority: "media"
     },
     {
-      id: "plantas-interior",
-      name: "Macetas con plantas de interior",
-      category: "living",
-      price: "$12.000",
-      image: "https://images.unsplash.com/photo-1485955900006-10f4d024d547?w=400&h=400&fit=crop",
-      url: "https://listado.mercadolibre.com.ar/maceta-planta-interior",
+      id: "tostadora-liliana",
+      name: "Tostadora Liliana Tostler AT900",
+      category: "cocina",
+      price: "$37.499",
+      image: "https://http2.mlstatic.com/D_Q_NP_912375-MLA99937528491_112025-F.jpg",
+      url: "https://www.mercadolibre.com.ar/tostadora-liliana-tostler-at900/p/MLA19479631",
+      priority: "media"
+    },
+    {
+      id: "pava-hudson",
+      name: "Pava Total Olive 1,5 L pico matero Hudson verde",
+      category: "cocina",
+      price: "$34.287",
+      image: "https://http2.mlstatic.com/D_Q_NP_739015-MLA95732418826_102025-F.jpg",
+      url: "https://www.mercadolibre.com.ar/pava-total-olive-15lts-pico-matero-hudson-verde/p/MLA47293426",
+      priority: "media"
+    },
+    {
+      id: "utensilios-hudson",
+      name: "Set 6 utensilios nylon Olive mango madera Hudson",
+      category: "cocina",
+      price: "$59.563",
+      image: "https://http2.mlstatic.com/D_Q_NP_841844-MLA111045631617_042026-F.jpg",
+      url: "https://www.mercadolibre.com.ar/set-de-6-utensilios-de-nylon-olive-con-mango-madera/up/MLAU3079827620",
+      priority: "media"
+    },
+    {
+      id: "tuppers-rossfer",
+      name: "Set tuppers x30 1 L con divisiones Rossfer",
+      category: "cocina",
+      price: "$37.650",
+      image: "https://http2.mlstatic.com/D_Q_NP_811752-MLA105811715596_022026-F.jpg",
+      url: "https://www.mercadolibre.com.ar/set-tuppers-x-30-1l-2-divisiones-rossfer-microondas-freezer/up/MLAU3766033889",
+      priority: "media"
+    },
+    {
+      id: "cubiertos-tramontina",
+      name: "Set 24 cubiertos Tramontina Dynamic madera",
+      category: "cocina",
+      price: "$55.090",
+      image: "https://http2.mlstatic.com/D_Q_NP_782540-MLA69941898788_062023-F.jpg",
+      url: "https://www.mercadolibre.com.ar/set-24-cubiertos-tramontina-dynamic-mango-de-madera-original/up/MLAU228132065",
+      priority: "alta"
+    },
+    {
+      id: "tender-global",
+      name: "Tender plegable extensible 1,5 m Global Sanitarios",
+      category: "hogar",
+      price: "$32.999",
+      image: "https://http2.mlstatic.com/D_Q_NP_631164-MLA96413220685_102025-F.jpg",
+      url: "https://www.mercadolibre.com.ar/tender-global-sanitarios-aluminio-plegable-extensible-15m-con-alas/p/MLA60854179",
+      priority: "media"
+    },
+    {
+      id: "cuchillos-cuk",
+      name: "Set x6 cuchillos cerámica CUK Gadnic con soporte",
+      category: "cocina",
+      price: "$29.999",
+      image: "https://http2.mlstatic.com/D_Q_NP_675650-MLA99935945857_112025-F.jpg",
+      url: "https://www.mercadolibre.com.ar/set-x6-piezas-cuk-by-gadnic-ceramica-cuchillos-mango-silicona-con-pelapapas-soporte-distintas-medidas-color-negro/p/MLA27399901",
+      priority: "media"
+    },
+    {
+      id: "bateria-hudson",
+      name: "Batería Hudson Olive antiadherente cerámica",
+      category: "cocina",
+      price: "$170.062",
+      image: "https://http2.mlstatic.com/D_Q_NP_812256-MLA96323933005_102025-F.jpg",
+      url: "https://www.mercadolibre.com.ar/bateria-hudson-olive-antiadherente-cocina-ceramica-premium/up/MLAU3091258151",
+      priority: "alta"
+    },
+    {
+      id: "botellas-vidrio",
+      name: "Set x3 botellas de vidrio 1 L tapa blanca",
+      category: "cocina",
+      price: "$14.062",
+      image: "https://http2.mlstatic.com/D_Q_NP_893415-MLA100976013056_122025-F.jpg",
+      url: "https://www.mercadolibre.com.ar/set-x3-botellas-vidrio-1l-tapa-blanca-agua-jugo-tienda-mama/up/MLAU222639729",
       priority: "baja"
     },
     {
-      id: "organizador-cocina",
-      name: "Organizador de alacena",
+      id: "ensaladera-porcelana",
+      name: "Ensaladera bowl porcelana artesanal 19 cm",
       category: "cocina",
-      price: "$15.800",
-      image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=400&fit=crop",
-      url: "https://listado.mercadolibre.com.ar/organizador-alacena-cocina",
+      price: "$10.874",
+      image: "https://http2.mlstatic.com/D_Q_NP_651026-MLA110177077953_042026-F.jpg",
+      url: "https://articulo.mercadolibre.com.ar/MLA-1111027819-ensaladera-bowl-porcelana-artesanal-filo-envejecido-19-cm-_JM",
+      priority: "baja"
+    },
+    {
+      id: "vasos-rigolleau",
+      name: "Set x12 vasos Rigolleau Copón Gourmet 450 ml",
+      category: "cocina",
+      price: "$19.725",
+      image: "https://http2.mlstatic.com/D_Q_NP_984461-MLA95498036114_102025-F.jpg",
+      url: "https://www.mercadolibre.com.ar/set-x-12-vaso-vidrio-rigolleau-copon-gourmet-flint-450-ml-transparente/p/MLA57776307",
       priority: "media"
     },
     {
-      id: "lampara-mesa",
-      name: "Lámpara de mesa para el living",
+      id: "vajilla-12-piezas",
+      name: "Set vajilla 12 piezas filo envejecido cuadrado",
+      category: "cocina",
+      price: "$97.462",
+      image: "https://http2.mlstatic.com/D_Q_NP_941378-MLA71288272688_082023-F.jpg",
+      url: "https://articulo.mercadolibre.com.ar/MLA-1316291326-set-vajilla-12-piezas-plato-playo-postre-hondo-filo-envejeci-_JM",
+      priority: "alta"
+    },
+    {
+      id: "vajilla-hamburguesa",
+      name: "Vajilla creativa forma de hamburguesa x7",
+      category: "cocina",
+      price: "$12.349",
+      image: "https://http2.mlstatic.com/D_Q_NP_773861-CBT89931959893_082025-F.jpg",
+      url: "https://www.mercadolibre.com.ar/vajilla-creativa-forma-de-hamburguesa-set-de-7-piezas/p/MLA2069394994",
+      priority: "baja"
+    },
+    {
+      id: "pizzera-hudson",
+      name: "Pizzera redonda Hudson 35 cm antiadherente",
+      category: "cocina",
+      price: "$15.750",
+      image: "https://http2.mlstatic.com/D_Q_NP_954161-MLA108941888632_032026-F.jpg",
+      url: "https://www.mercadolibre.com.ar/pizzera-redonda-con-doble-antiadherente-hudson-35-cm-negro/p/MLA33259858",
+      priority: "media"
+    },
+    {
+      id: "porta-llaves-shrek",
+      name: "Porta llaves Shrek",
       category: "living",
-      price: "$28.900",
-      image: "https://images.unsplash.com/photo-1507473885765-e6ed423f92fe?w=400&h=400&fit=crop",
-      url: "https://listado.mercadolibre.com.ar/lampara-mesa-living",
+      price: "$15.000",
+      image: "https://http2.mlstatic.com/D_Q_NP_908538-MLA80307172991_102024-F.jpg",
+      url: "https://www.mercadolibre.com.ar/porta-llaves-shrek/up/MLAU2615249854",
+      priority: "baja"
+    },
+    {
+      id: "accesorios-bano-jazak",
+      name: "Set accesorios baño Jazak 6 piezas bambú y negro",
+      category: "bano",
+      price: "$29.637",
+      image: "https://http2.mlstatic.com/D_Q_NP_644223-MLA94043807387_102025-F.jpg",
+      url: "https://www.mercadolibre.com.ar/set-de-accesorios-para-bano-jazak-de-6-piezas-en-bambu-y-negro/p/MLA58846568",
+      priority: "media"
+    },
+    {
+      id: "posavasos-eevee",
+      name: "Posavasos de madera Pokémon Eevee x9",
+      category: "living",
+      price: "$32.899",
+      image: "https://http2.mlstatic.com/D_Q_NP_608982-MLA104308205433_012026-F.jpg",
+      url: "https://www.mercadolibre.com.ar/posavaso-de-madera-brillante-pokemon-eevee-estilo-gamer-x9/up/MLAU3175636666",
       priority: "media"
     }
   ],
   contribuciones: [
     {
-      id: "lavarropas",
-      name: "Lavarropas",
-      description: "Para no ir corriendo al lavadero cada semana — un básico que nos va a cambiar la vida.",
-      meta: "$450.000",
-      icon: "🧺"
-    },
-    {
-      id: "ollas",
-      name: "Juego de ollas y sartenes",
-      description: "Cocinar juntos es uno de nuestros rituales. Necesitamos buenas ollas para las cenas de domingo.",
-      meta: "$120.000",
-      icon: "🍳"
-    },
-    {
-      id: "heladera",
-      name: "Heladera",
-      description: "La pieza central de la cocina. Guardar las compras del barrio y las sobras de las cenas.",
-      meta: "$680.000",
-      icon: "🧊"
-    },
-    {
-      id: "colchon",
-      name: "Colchón y sommier",
-      description: "Dormir bien después de un día largo — prioridad máxima para nuestro cuarto.",
-      meta: "$350.000",
-      icon: "🛏️"
-    },
-    {
-      id: "microondas",
-      name: "Microondas",
-      description: "Para esos días en que llegamos tarde y solo queremos calentar algo rico.",
-      meta: "$95.000",
-      icon: "📻"
-    },
-    {
-      id: "muebles-living",
-      name: "Muebles del living",
-      description: "Un sillón cómodo y una mesita para recibir a ustedes con mate y buena charla.",
-      meta: "$280.000",
-      icon: "🛋️"
+      id: "lavarropas-bgh",
+      name: "Lavarropas BGH Inverter 6 kg",
+      description:
+        "Carga frontal, gris oscuro — el electro que más nos falta para armar el hogar. Si querés sumarte, tu aporte va directo a comprar este modelo.",
+      meta: "6 kg · Inverter · A+++",
+      image: "assets/productos/lavarropas-bgh.webp",
+      url: "https://www.mercadolibre.com.ar/lavarropas-bgh-inverter-carga-frontal-6kg-bwfe06s24ar-color-gris-oscuro/p/MLA51863938"
     }
   ]
 };

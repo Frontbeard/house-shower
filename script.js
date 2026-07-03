@@ -74,11 +74,9 @@ function applyConfig() {
     embed.src = c.mapsEmbed || `https://maps.google.com/maps?q=${q}&output=embed`;
   }
 
-  const url = c.regalameUrl || c.mercadoLibreListUrl;
-  ["ml-list-link", "contrib-link"].forEach((id) => {
-    const el = document.getElementById(id);
-    if (el && url) el.href = url;
-  });
+  const wishlistUrl = c.regalameUrl || c.mercadoLibreListUrl;
+  const mlList = document.getElementById("ml-list-link");
+  if (mlList && wishlistUrl) mlList.href = wishlistUrl;
 
   const audio = document.getElementById("ambient-audio");
   if (audio && c.musicUrl) audio.src = c.musicUrl;
@@ -854,44 +852,94 @@ function onWishlistClick(e) {
   }
 }
 
-/* ─── Contribuciones ─── */
-function renderContrib() {
-  const grid = document.getElementById("contrib-grid");
-  const items = window.CONFIG?.contribuciones;
-  if (!grid || !items) return;
+function formatTransferData(t) {
+  const lines = [
+    t.titular && `Titular: ${t.titular}`,
+    t.cuil && `CUIT/CUIL: ${t.cuil}`,
+    t.cvu && `CVU: ${t.cvu}`,
+    t.alias && `Alias: ${t.alias}`
+  ].filter(Boolean);
+  return lines.join("\n");
+}
 
-  grid.innerHTML = items.map((item) => `
-    <div class="contrib-item card reveal">
-      <button type="button" class="contrib-item__head" aria-expanded="false">
-        <span class="contrib-item__icon">${item.icon}</span>
-        <span class="contrib-item__title">${esc(item.name)}</span>
-        <span class="contrib-item__meta">${item.meta}</span>
-        <span class="contrib-item__arrow">▼</span>
-      </button>
-      <div class="contrib-item__body" hidden>
-        <p class="contrib-item__desc">${esc(item.description)}</p>
+function copyText(text) {
+  if (!text) return;
+  navigator.clipboard.writeText(text)
+    .then(() => toast("Copiado al portapapeles"))
+    .catch(() => toast("No se pudo copiar"));
+}
+
+function showContribCard() {
+  const card = document.querySelector("#contrib-grid .contrib-feature");
+  if (card) card.classList.add("is-visible");
+  setupReveals(document.getElementById("contrib-grid"));
+}
+
+/* ─── Contribuciones ─── */
+function renderTransferRow(label, value, copyable = false) {
+  if (!value) return "";
+  return `
+    <div class="contrib-transfer__row">
+      <dt>${esc(label)}</dt>
+      <dd>
+        <span class="contrib-transfer__value">${esc(value)}</span>
+        ${copyable ? `<button type="button" class="contrib-copy" data-copy="${esc(value)}" aria-label="Copiar ${esc(label)}">Copiar</button>` : ""}
+      </dd>
+    </div>`;
+}
+
+function renderContrib() {
+  const shell = document.getElementById("contrib-grid");
+  const item = window.CONFIG?.contribuciones?.[0];
+  const t = window.CONFIG?.transferencia;
+  if (!shell || !item) return;
+
+  shell.innerHTML = `
+    <article class="contrib-feature card reveal">
+      ${item.image ? `
+        <div class="contrib-feature__img">
+          <img src="${esc(item.image)}" alt="${esc(item.name)}" loading="lazy">
+        </div>` : ""}
+      <div class="contrib-feature__body">
+        ${item.meta ? `<p class="contrib-feature__meta">${esc(item.meta)}</p>` : ""}
+        <h3 class="contrib-feature__title">${esc(item.name)}</h3>
+        ${item.price ? `<p class="contrib-feature__price">${esc(item.price)}</p>` : ""}
+        <p class="contrib-feature__desc">${esc(item.description)}</p>
+        ${item.url ? `<a class="btn btn--gold contrib-feature__ml" href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">Ver en Mercado Libre</a>` : ""}
+        ${t ? `
+          <div class="contrib-transfer">
+            <h4 class="contrib-transfer__heading">Datos para transferir</h4>
+            <dl class="contrib-transfer__list">
+              ${renderTransferRow("Titular", t.titular)}
+              ${renderTransferRow("Banco", t.banco)}
+              ${renderTransferRow("CUIT/CUIL", t.cuil, true)}
+              ${renderTransferRow("CVU", t.cvu, true)}
+              ${renderTransferRow("Alias", t.alias, true)}
+            </dl>
+            <button type="button" class="btn btn--sm btn--ghost contrib-transfer__all" data-copy-all>Copiar todos los datos</button>
+            ${t.nota ? `<p class="contrib-transfer__note">${esc(t.nota)}</p>` : ""}
+          </div>
+        ` : ""}
       </div>
-    </div>
-  `).join("");
+    </article>`;
+
+  if (window.__scrollReady) showContribCard();
 }
 
 function setupContrib() {
-  document.getElementById("contrib-grid")?.addEventListener("click", (e) => {
-    const head = e.target.closest(".contrib-item__head");
-    if (!head) return;
-    const item = head.closest(".contrib-item");
-    const body = item.querySelector(".contrib-item__body");
-    const open = item.classList.contains("is-open");
+  const shell = document.getElementById("contrib-grid");
+  if (!shell) return;
 
-    document.querySelectorAll(".contrib-item.is-open").forEach((c) => {
-      if (c === item) return;
-      c.classList.remove("is-open");
-      c.querySelector(".contrib-item__body").hidden = true;
-    });
+  shell.addEventListener("click", (e) => {
+    const allBtn = e.target.closest("[data-copy-all]");
+    if (allBtn) {
+      copyText(formatTransferData(window.CONFIG?.transferencia || {}));
+      return;
+    }
 
-    item.classList.toggle("is-open", !open);
-    body.hidden = open;
-    head.setAttribute("aria-expanded", String(!open));
+    const btn = e.target.closest("[data-copy]");
+    if (!btn) return;
+    copyText(btn.dataset.copy);
   });
 }
 
@@ -908,6 +956,10 @@ function setupTabs() {
         p.classList.toggle("is-active", show);
         p.hidden = !show;
       });
+
+      if (tab.dataset.tab === "contribuir") {
+        requestAnimationFrame(showContribCard);
+      }
     });
   });
 

@@ -669,18 +669,42 @@ h2 { font-family: var(--font-display); font-size: 1.35rem; font-weight: 600; }
 .wish-card__reserved { font-size: 0.78rem; color: var(--gold-deep); margin: 0.35rem 0; }
 .wish-card__acts { display: flex; gap: 0.35rem; flex-wrap: wrap; margin-top: 0.65rem; }
 
-.contrib-hint { text-align: center; color: var(--ink-muted); font-size: 0.9rem; margin-bottom: 1.25rem; }
-.contrib-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 0.85rem; margin-bottom: 1.5rem; }
-.contrib-item { padding: 0; overflow: hidden; cursor: pointer; }
-.contrib-item__head { display: flex; align-items: center; gap: 0.75rem; width: 100%; padding: 1rem 1.15rem; background: none; border: none; font-family: inherit; cursor: pointer; text-align: left; color: inherit; }
-.contrib-item__icon { font-size: 1.4rem; }
-.contrib-item__title { flex: 1; font-family: var(--font-display); font-size: 1.05rem; font-weight: 600; }
-.contrib-item__meta { font-size: 0.8rem; font-weight: 600; color: var(--gold-deep); }
-.contrib-item__arrow { font-size: 0.65rem; color: var(--ink-muted); transition: transform 0.3s; }
-.contrib-item.is-open .contrib-item__arrow { transform: rotate(180deg); }
-.contrib-item__body { max-height: 0; overflow: hidden; transition: max-height 0.4s var(--ease); padding: 0 1.15rem; }
-.contrib-item.is-open .contrib-item__body { max-height: 160px; padding-bottom: 1rem; }
-.contrib-item__desc { font-size: 0.9rem; color: var(--ink-soft); line-height: 1.6; }
+.contrib-hint { text-align: center; color: var(--ink-muted); font-size: 0.9rem; margin-bottom: 1.25rem; max-width: 28rem; margin-left: auto; margin-right: auto; }
+.contrib-shell { max-width: 420px; margin: 0 auto; }
+.contrib-feature { overflow: hidden; padding: 0; text-align: center; box-shadow: var(--shadow); }
+.contrib-feature__img {
+  height: 280px; overflow: hidden;
+  background: #fff;
+  border-bottom: 1px solid rgba(201, 168, 108, 0.18);
+}
+.contrib-feature__img img { width: 100%; height: 100%; object-fit: contain; padding: 0.75rem 1rem; }
+.contrib-feature__body { padding: 1.5rem 1.6rem 1.6rem; }
+.contrib-feature__meta { font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold-deep); margin-bottom: 0.35rem; }
+.contrib-feature__title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 600; margin-bottom: 0.35rem; line-height: 1.25; }
+.contrib-feature__price { font-weight: 600; color: var(--gold-deep); font-size: 0.95rem; margin-bottom: 0.75rem; }
+.contrib-feature__desc { font-size: 0.92rem; color: var(--ink-soft); line-height: 1.65; margin-bottom: 1.15rem; }
+.contrib-feature__ml { width: 100%; justify-content: center; }
+.contrib-transfer {
+  margin-top: 1.35rem; padding: 1.15rem 1.1rem 1rem;
+  border-radius: calc(var(--radius) - 4px);
+  background: rgba(255, 255, 255, 0.42);
+  border: 1px solid rgba(201, 168, 108, 0.22);
+  text-align: left;
+}
+.contrib-transfer__heading { font-family: var(--font-display); font-size: 1.12rem; font-weight: 600; margin-bottom: 0.85rem; text-align: center; }
+.contrib-transfer__list { display: grid; gap: 0.7rem; margin-bottom: 0.85rem; }
+.contrib-transfer__row { display: grid; grid-template-columns: 5.75rem 1fr; gap: 0.5rem; align-items: start; font-size: 0.85rem; }
+.contrib-transfer__row dt { color: var(--ink-muted); font-weight: 500; padding-top: 0.1rem; }
+.contrib-transfer__row dd { display: flex; flex-wrap: wrap; align-items: center; gap: 0.45rem; margin: 0; min-width: 0; }
+.contrib-transfer__value { font-weight: 600; color: var(--ink); word-break: break-all; }
+.contrib-copy {
+  padding: 0.2rem 0.55rem; border-radius: 999px; border: 1px solid rgba(201, 168, 108, 0.45);
+  background: rgba(255, 255, 255, 0.55); font-size: 0.68rem; font-weight: 600; color: var(--gold-deep);
+  cursor: pointer; font-family: inherit; transition: all 0.2s; flex-shrink: 0;
+}
+.contrib-copy:hover { background: var(--gold-deep); color: white; border-color: var(--gold-deep); }
+.contrib-transfer__all { width: 100%; justify-content: center; margin-bottom: 0.15rem; }
+.contrib-transfer__note { margin-top: 0.75rem; font-size: 0.82rem; color: var(--ink-muted); line-height: 1.55; text-align: center; }
 
 .rsvp__title { font-family: var(--font-display); font-size: 1.75rem; margin-bottom: 0.35rem; text-align: center; }
 .rsvp__sub { color: var(--ink-soft); margin-bottom: 1.5rem; text-align: center; }
@@ -1030,8 +1054,9 @@ body.envelope-done .particles { opacity: 0.35; transition: opacity 1.2s ease; }
   .wish-grid { grid-template-columns: 1fr; gap: 0.85rem; }
   .wish-card__acts { flex-direction: column; }
   .wish-card__acts .btn { width: 100%; justify-content: center; }
-  .contrib-grid { grid-template-columns: 1fr; }
-  .contrib-item__head { padding: 0.85rem 1rem; }
+  .contrib-shell { max-width: 100%; }
+  .contrib-feature__body { padding: 1.15rem 1.1rem 1.25rem; }
+  .contrib-transfer__row { grid-template-columns: 1fr; gap: 0.2rem; }
   .btn--center { width: 100%; }
 
   /* RSVP */
