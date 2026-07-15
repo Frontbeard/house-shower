@@ -1,5 +1,5 @@
 const SESSION_KEY = "house-shower-opened";
-const STORAGE_KEY = "house-shower-reservations";
+const RESERVATIONS_TABLE = "house_shower_reservations";
 
 /* ─── Utils ─── */
 const esc = (t) => { const d = document.createElement("div"); d.textContent = t; return d.innerHTML; };
@@ -11,21 +11,119 @@ function toast(msg) {
   setTimeout(() => el.classList.remove("show"), 3200);
 }
 
+/* ─── Shared reservations (Supabase) ─── */
+let reservationsCache = {};
+let supabaseClient = null;
+let reservationsChannel = null;
+let reservationsReady = false;
+
+function initSupabase() {
+  const url = window.CONFIG?.supabaseUrl;
+  const key = window.CONFIG?.supabaseAnonKey;
+  if (!url || !key || !window.supabase?.createClient) return null;
+  supabaseClient = window.supabase.createClient(url, key);
+  return supabaseClient;
+}
+
 function getReservations() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); }
-  catch { return {}; }
+  return reservationsCache;
 }
 
-function saveReservation(id, name) {
-  const r = getReservations();
-  r[id] = { name, date: new Date().toISOString() };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(r));
+function setReservationsFromRows(rows = []) {
+  const next = {};
+  rows.forEach((row) => {
+    if (!row?.item_id) return;
+    next[row.item_id] = {
+      name: row.reserved_by,
+      date: row.reserved_at
+    };
+  });
+  reservationsCache = next;
 }
 
-function clearReservation(id) {
-  const r = getReservations();
-  delete r[id];
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(r));
+async function loadReservations() {
+  if (!supabaseClient) return false;
+  const { data, error } = await supabaseClient
+    .from(RESERVATIONS_TABLE)
+    .select("item_id, reserved_by, reserved_at");
+
+  if (error) {
+    console.error("No se pudieron cargar las reservas", error);
+    toast("No se pudieron cargar las reservas. Recargá en un momento.");
+    return false;
+  }
+
+  setReservationsFromRows(data || []);
+  reservationsReady = true;
+  return true;
+}
+
+function subscribeReservations() {
+  if (!supabaseClient || reservationsChannel) return;
+
+  reservationsChannel = supabaseClient
+    .channel("house-shower-reservations")
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: RESERVATIONS_TABLE },
+      (payload) => {
+        if (payload.eventType === "INSERT" && payload.new) {
+          reservationsCache[payload.new.item_id] = {
+            name: payload.new.reserved_by,
+            date: payload.new.reserved_at
+          };
+        } else if (payload.eventType === "DELETE" && payload.old) {
+          delete reservationsCache[payload.old.item_id];
+        } else if (payload.eventType === "UPDATE" && payload.new) {
+          reservationsCache[payload.new.item_id] = {
+            name: payload.new.reserved_by,
+            date: payload.new.reserved_at
+          };
+        }
+        renderWishlist(activeFilter(), { keepExpanded: true });
+      }
+    )
+    .subscribe();
+}
+
+async function saveReservation(id, name) {
+  if (!supabaseClient) throw new Error("Supabase no disponible");
+
+  const { data, error } = await supabaseClient
+    .from(RESERVATIONS_TABLE)
+    .insert({
+      item_id: id,
+      reserved_by: name.trim()
+    })
+    .select("item_id, reserved_by, reserved_at")
+    .single();
+
+  if (error) {
+    if (error.code === "23505") {
+      await loadReservations();
+      throw new Error("ALREADY_RESERVED");
+    }
+    throw error;
+  }
+
+  reservationsCache[id] = {
+    name: data.reserved_by,
+    date: data.reserved_at
+  };
+}
+
+async function clearReservation(id, name) {
+  if (!supabaseClient) throw new Error("Supabase no disponible");
+
+  const { data, error } = await supabaseClient.rpc("release_house_shower_reservation", {
+    p_item_id: id,
+    p_name: name.trim()
+  });
+
+  if (error) throw error;
+  if (!data) throw new Error("NAME_MISMATCH");
+
+  delete reservationsCache[id];
 }
 
 /* ─── Config ─── */
@@ -47,7 +145,6 @@ function applyConfig() {
   }
 
   set("hero-names", c.hosts);
-  set("nav-brand", c.hosts);
   set("signoff-names", c.hosts);
   set("footer-names", c.hosts);
   set("event-date", c.eventDate);
@@ -73,10 +170,6 @@ function applyConfig() {
     const q = encodeURIComponent(`${c.address}, ${c.neighborhood}`);
     embed.src = c.mapsEmbed || `https://maps.google.com/maps?q=${q}&output=embed`;
   }
-
-  const wishlistUrl = c.regalameUrl || c.mercadoLibreListUrl;
-  const mlList = document.getElementById("ml-list-link");
-  if (mlList && wishlistUrl) mlList.href = wishlistUrl;
 
   const audio = document.getElementById("ambient-audio");
   if (audio && c.musicUrl) audio.src = c.musicUrl;
@@ -190,7 +283,7 @@ function initParticles() {
       if (p.x > w + 10) p.x = -10;
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(201, 168, 108, ${p.a})`;
+      ctx.fillStyle = `rgba(143, 157, 104, ${p.a})`;
       ctx.fill();
     });
     requestAnimationFrame(draw);
@@ -206,10 +299,10 @@ function initParticles() {
 let envelopeFloatTween = null;
 
 function floatEnvelope() {
-  const unit = document.getElementById("envelope-unit");
-  if (!unit || !window.gsap) return;
+  const env = document.getElementById("envelope");
+  if (!env || !window.gsap) return;
   envelopeFloatTween?.kill();
-  envelopeFloatTween = gsap.to(unit, {
+  envelopeFloatTween = gsap.to(env, {
     y: -6,
     duration: 3.2,
     ease: "sine.inOut",
@@ -221,8 +314,8 @@ function floatEnvelope() {
 function stopEnvelopeFloat() {
   envelopeFloatTween?.kill();
   envelopeFloatTween = null;
-  const unit = document.getElementById("envelope-unit");
-  if (unit && window.gsap) gsap.set(unit, { y: 0 });
+  const env = document.getElementById("envelope");
+  if (env && window.gsap) gsap.set(env, { y: 0 });
 }
 
 /* ─── Open envelope (GSAP timeline) ─── */
@@ -286,13 +379,15 @@ function finishOpen(onComplete) {
   onComplete?.();
 }
 
+
 function resetEnvelopeVisuals() {
   ["envelope-unit", "envelope", "envelope-card", "envelope-seal",
-    "envelope-flap-wrap", "envelope-hint", "envelope-scene"].forEach((id) => {
+    "envelope-flap-wrap", "envelope-hint", "envelope-scene", "envelope-pocket"].forEach((id) => {
     const el = document.getElementById(id);
     if (el) el.style.cssText = "";
   });
-  document.querySelectorAll(".envelope__fold, .envelope__face").forEach((el) => {
+  document.getElementById("envelope-pocket")?.classList.remove("is-open");
+  document.querySelectorAll(".envelope__fold").forEach((el) => {
     el.style.cssText = "";
   });
 }
@@ -302,24 +397,20 @@ function playOpenFallback() {
   const card = document.getElementById("envelope-card");
   const seal = document.getElementById("envelope-seal");
   const flap = document.getElementById("envelope-flap-wrap");
-  const face = document.querySelector(".envelope__face");
   const env = document.getElementById("envelope");
   const hint = document.getElementById("envelope-hint");
+  const pocket = document.getElementById("envelope-pocket");
 
   document.body.classList.add("is-opening");
   scene?.classList.remove("is-hidden");
   scene?.classList.add("is-opening");
   if (hint) hint.style.opacity = "0";
-  if (seal) { seal.style.opacity = "0"; seal.style.transform = "scale(0) rotate(20deg)"; }
-  if (flap) flap.style.transform = "rotateX(-165deg)";
-  if (face) face.style.opacity = "0";
-  if (card) {
-    card.style.visibility = "visible";
-    card.style.opacity = "1";
-    card.style.transform = "translateY(-180px)";
-  }
-  if (env) { env.style.opacity = "0"; env.style.transform = "translateY(30px)"; }
-  setTimeout(() => finishOpen(initScrollAnimations), 2200);
+  if (seal) { seal.style.opacity = "0"; seal.style.transform = "translateY(36px) scale(0.55)"; }
+  if (flap) flap.style.transform = "rotateX(-178deg)";
+  if (pocket) pocket.classList.add("is-open");
+  if (card) card.style.transform = "translateY(-118%)";
+  if (env) { env.style.opacity = "0"; env.style.transform = "translateY(24px)"; }
+  setTimeout(() => finishOpen(initScrollAnimations), 2800);
 }
 
 function openEnvelope() {
@@ -333,10 +424,10 @@ function openEnvelope() {
   const hint = document.getElementById("envelope-hint");
   const seal = document.getElementById("envelope-seal");
   const flap = document.getElementById("envelope-flap-wrap");
-  const face = document.querySelector(".envelope__face");
   const folds = document.querySelectorAll(".envelope__fold");
   const env = document.getElementById("envelope");
   const card = document.getElementById("envelope-card");
+  const pocket = document.getElementById("envelope-pocket");
   const shadow = document.querySelector(".envelope__shadow");
 
   document.body.classList.add("is-opening");
@@ -353,78 +444,112 @@ function openEnvelope() {
     return;
   }
 
-  const targets = [unit, env, seal, flap, face, card, scene, hint, shadow, ...folds];
+  const targets = [unit, env, seal, flap, card, pocket, scene, hint, shadow, ...folds];
   gsap.killTweensOf(targets);
   openTimeline?.kill();
   resetEnvelopeVisuals();
 
-  const cardLift = unit && unit.offsetHeight < 230 ? -175 : -210;
-
   gsap.set(unit, { y: 0, opacity: 1, scale: 1 });
-  gsap.set(env, { opacity: 1, y: 0, scale: 1 });
-  gsap.set(seal, { scale: 1, opacity: 1, rotation: 0 });
+  gsap.set(env, { opacity: 1, y: 0, scale: 1, transformStyle: "preserve-3d" });
+  gsap.set(seal, { scale: 1, opacity: 1, rotation: 0, y: 0, x: 0 });
   gsap.set(flap, {
     rotationX: 0,
-    transformOrigin: "top center",
-    transformPerspective: 900
+    transformOrigin: "50% 0%",
+    force3D: true
   });
-  gsap.set(face, { opacity: 1 });
   gsap.set(folds, { opacity: 1 });
   gsap.set(shadow, { opacity: 1, scale: 1 });
-  gsap.set(card, { visibility: "hidden", opacity: 0, y: 8, scale: 0.96, zIndex: 2 });
+  gsap.set(pocket, { zIndex: 2 });
+  gsap.set(card, { y: "8%", scale: 1, opacity: 1 });
   gsap.set(scene, { opacity: 1 });
   gsap.set(hint, { opacity: 1 });
+  pocket?.classList.remove("is-open");
 
   openTimeline = gsap.timeline({
     onComplete: () => finishOpen(initScrollAnimations)
   });
 
-  /* 1 — Sello */
-  openTimeline.to(hint, { opacity: 0, duration: 0.2 }, 0);
+  /* Toque del sobre */
+  openTimeline.to(env, {
+    scale: 0.982,
+    duration: 0.16,
+    ease: "power1.out"
+  }, 0);
+  openTimeline.to(hint, { opacity: 0, duration: 0.28, ease: "power1.out" }, 0);
+  openTimeline.to(env, {
+    scale: 1,
+    duration: 0.32,
+    ease: "power2.out"
+  }, 0.16);
+
+  /* El sello cae */
   openTimeline.to(seal, {
-    scale: 0,
+    y: 42,
+    x: 14,
+    rotation: 26,
+    scale: 0.62,
     opacity: 0,
-    rotation: 24,
-    duration: 0.45,
-    ease: "back.in(2.2)"
-  }, 0.05);
+    duration: 0.7,
+    ease: "power3.in"
+  }, 0.2);
 
-  /* 2 — Solapa hacia atrás */
+  /* La solapa se abre hacia atrás */
   openTimeline.to(flap, {
-    rotationX: -168,
-    duration: 1.05,
-    ease: "power3.inOut"
-  }, 0.18);
+    rotationX: -178,
+    duration: 1.15,
+    ease: "power2.inOut",
+    force3D: true
+  }, 0.55);
 
-  /* 3 — Tapa frontal cede */
-  openTimeline.to(face, { opacity: 0, duration: 0.3, ease: "power1.out" }, 0.42);
-
-  /* 4 — Carta sale */
-  openTimeline.set(card, { visibility: "visible", zIndex: 12 }, 0.58);
-  openTimeline.to(card, { opacity: 1, duration: 0.3, ease: "power1.out" }, 0.58);
+  /* La carta asoma por arriba (sigue detrás de los pliegues) */
   openTimeline.to(card, {
-    y: cardLift,
-    scale: 1.03,
+    y: "-22%",
+    duration: 0.85,
+    ease: "power1.inOut"
+  }, 1.35);
+
+  /* Sale del bolsillo por encima del sobre */
+  openTimeline.call(() => pocket?.classList.add("is-open"), null, 2.05);
+  openTimeline.set(pocket, { zIndex: 7 }, 2.05);
+  openTimeline.to(card, {
+    y: "-118%",
+    scale: 1.04,
     duration: 1.05,
     ease: "power2.out"
-  }, 0.62);
+  }, 2.05);
 
-  /* 5 — Cierre suave hacia el hero */
-  openTimeline.to(folds, { opacity: 0, duration: 0.35 }, 1.25);
-  openTimeline.to([env, shadow], {
+  openTimeline.to(folds, {
+    opacity: 0,
+    duration: 0.45,
+    ease: "power1.out"
+  }, 2.35);
+
+  openTimeline.to([env, shadow, flap], {
     y: 28,
     opacity: 0,
-    duration: 0.5,
+    duration: 0.7,
     ease: "power2.in"
-  }, 1.32);
+  }, 2.55);
+
+  openTimeline.to(card, {
+    opacity: 0,
+    y: "-132%",
+    duration: 0.45,
+    ease: "power1.in"
+  }, 2.85);
+
   openTimeline.to(unit, {
     opacity: 0,
-    y: -18,
-    scale: 1.05,
-    duration: 0.5,
+    y: -6,
+    duration: 0.4,
     ease: "power2.in"
-  }, 1.48);
-  openTimeline.to(scene, { opacity: 0, duration: 0.35, ease: "power1.in" }, 1.55);
+  }, 3.0);
+
+  openTimeline.to(scene, {
+    opacity: 0,
+    duration: 0.35,
+    ease: "power1.in"
+  }, 3.15);
 }
 
 window.openInvitation = openEnvelope;
@@ -465,7 +590,13 @@ function setupEnvelope() {
 
   replayBtn?.addEventListener("click", (e) => {
     e.preventDefault();
-    replayInvitation();
+    replayBtn.classList.add("is-spinning");
+    window.setTimeout(() => replayInvitation(), 280);
+  });
+  replayBtn?.addEventListener("animationend", (e) => {
+    if (e.target === replayBtn.querySelector(".btn--replay__icon")) {
+      replayBtn.classList.remove("is-spinning");
+    }
   });
 
   if (sessionStorage.getItem(SESSION_KEY) === "1" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
@@ -526,7 +657,7 @@ function setupNav() {
   const nav = document.getElementById("nav");
   const links = document.querySelectorAll("[data-nav]");
 
-  const sectionIds = ["inicio", "invitacion", "hogar", "galeria", "regalos", "rsvp", "ubicacion"];
+  const sectionIds = ["inicio", "invitacion", "hogar", "galeria", "regalos", "ubicacion", "rsvp"];
 
   const onScroll = () => {
     nav?.classList.toggle("nav--scrolled", window.scrollY > 20);
@@ -685,20 +816,51 @@ function setupGalleryCarousel() {
 }
 
 /* ─── Wishlist ─── */
+const WISH_MOBILE_LIMIT = 4;
+const WISH_MOBILE_MQ = "(max-width: 720px)";
+let wishlistExpanded = false;
+
 function activeFilter() {
   return document.querySelector(".chip.is-active")?.dataset.filter || "all";
 }
 
-function renderWishlist(filter = "all") {
+function isWishMobile() {
+  return window.matchMedia(WISH_MOBILE_MQ).matches;
+}
+
+function updateWishMoreButton(total) {
+  const grid = document.getElementById("wishlist-grid");
+  const btn = document.getElementById("wishlist-more");
+  if (!grid || !btn) return;
+
+  const mobile = isWishMobile();
+  const needsClamp = mobile && total > WISH_MOBILE_LIMIT;
+
+  grid.classList.toggle("is-expanded", !needsClamp || wishlistExpanded);
+  btn.hidden = !needsClamp;
+
+  if (!needsClamp) return;
+
+  const hiddenCount = total - WISH_MOBILE_LIMIT;
+  btn.setAttribute("aria-expanded", wishlistExpanded ? "true" : "false");
+  btn.textContent = wishlistExpanded ? "Ver menos" : `Ver más (${hiddenCount})`;
+}
+
+function renderWishlist(filter = "all", { keepExpanded = false } = {}) {
   const grid = document.getElementById("wishlist-grid");
   const items = window.CONFIG?.wishlist;
   if (!grid || !items) return;
+
+  if (!keepExpanded) wishlistExpanded = false;
 
   const res = getReservations();
   const list = items.filter((i) => filter === "all" || i.category === filter);
 
   if (!list.length) {
     grid.innerHTML = '<p class="wish-empty">No hay ítems en esta categoría.</p>';
+    grid.classList.add("is-expanded");
+    const moreBtn = document.getElementById("wishlist-more");
+    if (moreBtn) moreBtn.hidden = true;
     return;
   }
 
@@ -706,10 +868,13 @@ function renderWishlist(filter = "all") {
     const r = res[item.id];
     return `
       <article class="wish-card card reveal">
-        <div class="wish-card__img">
+        <button type="button" class="wish-card__img" data-action="photo" data-id="${item.id}" aria-label="Ver foto de ${esc(item.name)}">
           <img src="${item.image}" alt="${esc(item.name)}" loading="lazy">
           ${r ? '<span class="wish-card__badge">Reservado</span>' : ""}
-        </div>
+          <span class="wish-card__zoom" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4" stroke-linecap="round"/></svg>
+          </span>
+        </button>
         <div class="wish-card__body">
           <span class="wish-card__cat">${item.category}</span>
           <h3>${esc(item.name)}</h3>
@@ -726,7 +891,32 @@ function renderWishlist(filter = "all") {
       </article>`;
   }).join("");
 
+  updateWishMoreButton(list.length);
+
   if (window.__scrollReady) setupReveals(grid);
+}
+
+function setupWishlistMore() {
+  const btn = document.getElementById("wishlist-more");
+  if (!btn) return;
+
+  btn.addEventListener("click", () => {
+    wishlistExpanded = !wishlistExpanded;
+    updateWishMoreButton(
+      document.querySelectorAll("#wishlist-grid .wish-card").length
+    );
+    if (!wishlistExpanded) {
+      document.getElementById("regalos")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else if (window.__scrollReady) {
+      setupReveals(document.getElementById("wishlist-grid"));
+    }
+  });
+
+  window.matchMedia(WISH_MOBILE_MQ).addEventListener("change", () => {
+    updateWishMoreButton(
+      document.querySelectorAll("#wishlist-grid .wish-card").length
+    );
+  });
 }
 
 /* ─── Reserve modal ─── */
@@ -746,7 +936,7 @@ function setupReserveModal() {
     el.addEventListener("click", closeReserveModal);
   });
 
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const name = input.value.trim();
     if (!name) return;
@@ -754,25 +944,44 @@ function setupReserveModal() {
     const { id, action } = reserveModalState;
     if (!id || !action) return;
 
-    if (action === "reserve") {
-      saveReservation(id, name);
-      toast("¡Gracias! Quedó reservado.");
-      renderWishlist(activeFilter());
-      closeReserveModal();
-      return;
+    const submit = document.getElementById("reserve-modal-submit");
+    if (submit) {
+      submit.disabled = true;
+      submit.textContent = "Guardando...";
     }
 
-    if (action === "unreserve") {
-      const cur = getReservations()[id];
-      if (name !== cur?.name) {
-        toast("El nombre no coincide.");
-        input.focus();
+    try {
+      if (action === "reserve") {
+        await saveReservation(id, name);
+        toast("¡Gracias! Quedó reservado para todos.");
+        renderWishlist(activeFilter(), { keepExpanded: true });
+        closeReserveModal();
         return;
       }
-      clearReservation(id);
-      toast("Regalo liberado.");
-      renderWishlist(activeFilter());
-      closeReserveModal();
+
+      if (action === "unreserve") {
+        await clearReservation(id, name);
+        toast("Regalo liberado.");
+        renderWishlist(activeFilter(), { keepExpanded: true });
+        closeReserveModal();
+      }
+    } catch (err) {
+      if (err?.message === "ALREADY_RESERVED") {
+        toast("Uy, alguien ya lo reservó.");
+        renderWishlist(activeFilter(), { keepExpanded: true });
+        closeReserveModal();
+      } else if (err?.message === "NAME_MISMATCH") {
+        toast("El nombre no coincide con quien lo reservó.");
+        input.focus();
+      } else {
+        console.error(err);
+        toast("No se pudo guardar. Probá de nuevo.");
+      }
+    } finally {
+      if (submit) {
+        submit.disabled = false;
+        submit.textContent = "Confirmar";
+      }
     }
   });
 
@@ -834,7 +1043,9 @@ function closeReserveModal() {
     modal.classList.remove("is-open");
     modal.hidden = true;
     modal.setAttribute("aria-hidden", "true");
-    document.body.classList.remove("modal-open");
+    if (!document.getElementById("photo-modal")?.classList.contains("is-open")) {
+      document.body.classList.remove("modal-open");
+    }
   };
 
   const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -847,9 +1058,71 @@ function onWishlistClick(e) {
   if (!btn) return;
   const { id, action } = btn.dataset;
 
+  if (action === "photo") {
+    openPhotoModal(id);
+    return;
+  }
+
   if (action === "reserve" || action === "unreserve") {
     openReserveModal({ action, id });
   }
+}
+
+function openPhotoModal(id) {
+  const item = getWishlistItem(id);
+  const modal = document.getElementById("photo-modal");
+  const img = document.getElementById("photo-modal-img");
+  const title = document.getElementById("photo-modal-title");
+  const link = document.getElementById("photo-modal-link");
+  if (!item || !modal || !img) return;
+
+  img.src = item.image;
+  img.alt = item.name;
+  if (title) title.textContent = item.name;
+  if (link) {
+    link.href = item.url;
+    link.hidden = !item.url;
+  }
+
+  modal.hidden = false;
+  modal.setAttribute("aria-hidden", "false");
+  modal.classList.add("is-open");
+  document.body.classList.add("modal-open");
+  requestAnimationFrame(() => modal.classList.add("is-visible"));
+}
+
+function closePhotoModal() {
+  const modal = document.getElementById("photo-modal");
+  if (!modal?.classList.contains("is-open")) return;
+
+  modal.classList.remove("is-visible");
+  const finish = () => {
+    modal.classList.remove("is-open");
+    modal.hidden = true;
+    modal.setAttribute("aria-hidden", "true");
+    if (!document.getElementById("reserve-modal")?.classList.contains("is-open")) {
+      document.body.classList.remove("modal-open");
+    }
+    const img = document.getElementById("photo-modal-img");
+    if (img) img.removeAttribute("src");
+  };
+
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduced) finish();
+  else setTimeout(finish, 280);
+}
+
+function setupPhotoModal() {
+  const modal = document.getElementById("photo-modal");
+  if (!modal) return;
+
+  modal.querySelectorAll("[data-photo-close]").forEach((el) => {
+    el.addEventListener("click", closePhotoModal);
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && modal.classList.contains("is-open")) closePhotoModal();
+  });
 }
 
 function formatTransferData(t) {
@@ -892,20 +1165,19 @@ function renderContrib() {
   const shell = document.getElementById("contrib-grid");
   const item = window.CONFIG?.contribuciones?.[0];
   const t = window.CONFIG?.transferencia;
-  if (!shell || !item) return;
+  if (!shell || (!item && !t)) return;
+
+  const title = item?.name || "Un aporte para el hogar";
+  const meta = item?.meta || "Aporte libre";
+  const desc = item?.description
+    || "Si preferís no elegir algo de la wishlist, podés sumarte con un monto libre. Lo usamos para seguir armando la casa.";
 
   shell.innerHTML = `
     <article class="contrib-feature card reveal">
-      ${item.image ? `
-        <div class="contrib-feature__img">
-          <img src="${esc(item.image)}" alt="${esc(item.name)}" loading="lazy">
-        </div>` : ""}
       <div class="contrib-feature__body">
-        ${item.meta ? `<p class="contrib-feature__meta">${esc(item.meta)}</p>` : ""}
-        <h3 class="contrib-feature__title">${esc(item.name)}</h3>
-        ${item.price ? `<p class="contrib-feature__price">${esc(item.price)}</p>` : ""}
-        <p class="contrib-feature__desc">${esc(item.description)}</p>
-        ${item.url ? `<a class="btn btn--gold contrib-feature__ml" href="${esc(item.url)}" target="_blank" rel="noopener noreferrer">Ver en Mercado Libre</a>` : ""}
+        <p class="contrib-feature__meta">${esc(meta)}</p>
+        <h3 class="contrib-feature__title">${esc(title)}</h3>
+        <p class="contrib-feature__desc">${esc(desc)}</p>
         ${t ? `
           <div class="contrib-transfer">
             <h4 class="contrib-transfer__heading">Datos para transferir</h4>
@@ -1050,8 +1322,9 @@ function setupMusic() {
 }
 
 /* ─── Init ─── */
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   applyConfig();
+  initSupabase();
   initParticles();
   renderGallery();
   renderVisit();
@@ -1065,8 +1338,20 @@ document.addEventListener("DOMContentLoaded", () => {
   setupNav();
   setupEnvelope();
   setupReserveModal();
+  setupPhotoModal();
+  setupWishlistMore();
 
   document.getElementById("wishlist-grid")?.addEventListener("click", onWishlistClick);
+
+  if (supabaseClient) {
+    const ok = await loadReservations();
+    if (ok) {
+      renderWishlist(activeFilter(), { keepExpanded: true });
+      subscribeReservations();
+    }
+  } else {
+    toast("Las reservas compartidas no están disponibles en este momento.");
+  }
 
   if (sessionStorage.getItem(SESSION_KEY) === "1") {
     initScrollAnimations();

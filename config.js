@@ -12,30 +12,29 @@ window.CONFIG = {
   mapsEmbed: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3281.847!2d-58.4189!3d-34.6338!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bccacf0f4f4f4f%3A0x0!2sAv.+La+Plata+1930%2C+CABA!5e0!3m2!1ses!2sar!4v1",
   visit: {
     eyebrow: "En casa",
-    title: "Una tarde sin apuros",
+    title: "Una merienda en casa",
     intro:
-      "Queremos que conozcas el depto, tomes mate y te quedes charlando todo lo que quieras. Nada de cronograma ni formalidades — solo buena onda.",
-    note: "Si llegás un poco antes o después, tranqui. Lo importante es que vengas.",
+      "Pasá a conocer el depto, tomar unos mates y compartir la merienda con nosotros. Es una visita de la tarde: informal y con toda la buena onda.",
+    note: "Si llegás un ratito antes o después de las 16, tranqui. Contamos con vos para la merienda.",
     highlights: [
       { icon: "mate", title: "Mate y living", text: "Nos acomodamos, charlamos y te sentís en casa." },
-      { icon: "food", title: "Merienda", text: "Algo casero para picar, cuando pinte." },
+      { icon: "food", title: "Merienda", text: "Algo casero para picar juntos." },
       { icon: "home", title: "El depto", text: "Te mostramos los rincones que fuimos armando." },
       { icon: "toast", title: "Brindis", text: "Una copa por este capítulo nuevo." }
     ]
   },
   whatsappNumber: "5491152400334",
-  regalameUrl: "https://regalame.com.ar",
-  contribucionUrl:
-    "https://www.mercadolibre.com.ar/lavarropas-bgh-inverter-carga-frontal-6kg-bwfe06s24ar-color-gris-oscuro/p/MLA51863938",
+  supabaseUrl: "https://eqztjotyfhhhcbjzqfjt.supabase.co",
+  supabaseAnonKey:
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxenRqb3R5ZmhoaGNianpxZmp0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU3ODIyMDAsImV4cCI6MjA5MTM1ODIwMH0.I9W3ciy3vAdWK_80KzKEUq3Pg2JCLQ52jzIjx_gP7Kc",
   transferencia: {
     titular: "Martina Alejandra Renó",
     cuil: "27-41327355-8",
     cvu: "0000003100014771927048",
     alias: "martina.reno.mp",
     banco: "Mercado Pago",
-    nota: "Transferí el monto que quieras. Cualquier aporte suma ¡gracias!"
+    nota: "Transferí el monto que quieras. Cualquier aporte suma — ¡gracias!"
   },
-  mercadoLibreListUrl: "",
   musicUrl: "",
   heroPhoto: "assets/fotos/IMAGEN-11.jpeg",
   heroPhotoPosition: "center center",
@@ -43,7 +42,7 @@ window.CONFIG = {
   heroPhotoMobilePosition: "center 35%",
   galleryAutoplayMs: 4500,
   gallery: [
-    { src: "assets/fotos/IMAGEN-8.jpeg", srcMobile: "assets/fotos/IMAGEN-11.jpeg", alt: "Martina & Lucas" },
+    { src: "assets/fotos/IMAGEN-8.jpeg", alt: "Martina & Lucas" },
     { src: "assets/fotos/IMG_0101.jpg", alt: "Martina & Lucas en la playa" },
     { src: "assets/fotos/Foto 7.JPG", alt: "Martina & Lucas juntos" },
     { src: "assets/fotos/foto-mundial.png", alt: "Martina & Lucas celebrando el mundial" },
@@ -62,15 +61,6 @@ window.CONFIG = {
       price: "$39.999",
       image: "https://http2.mlstatic.com/D_Q_NP_718452-MLA99449318258_112025-F.jpg",
       url: "https://www.mercadolibre.com.ar/plancha-a-vapor-philco-pvp1117pi-1200w-regulador-temperatura-color-blanco/p/MLA15800941",
-      priority: "media"
-    },
-    {
-      id: "tostadora-liliana",
-      name: "Tostadora Liliana Tostler AT900",
-      category: "cocina",
-      price: "$37.499",
-      image: "https://http2.mlstatic.com/D_Q_NP_912375-MLA99937528491_112025-F.jpg",
-      url: "https://www.mercadolibre.com.ar/tostadora-liliana-tostler-at900/p/MLA19479631",
       priority: "media"
     },
     {
@@ -191,13 +181,40 @@ window.CONFIG = {
       priority: "media"
     },
     {
-      id: "porta-llaves-shrek",
-      name: "Porta llaves Shrek",
-      category: "living",
-      price: "$15.000",
-      image: "https://http2.mlstatic.com/D_Q_NP_908538-MLA80307172991_102024-F.jpg",
-      url: "https://www.mercadolibre.com.ar/porta-llaves-shrek/up/MLAU2615249854",
+      id: "cafetera-yelmo",
+      name: "Cafetera express Yelmo CE5107 19 bar",
+      category: "cocina",
+      price: "$149.193",
+      image: "https://http2.mlstatic.com/D_Q_NP_901182-MLA112748874333_062026-F.jpg",
+      url: "https://www.mercadolibre.com.ar/cafetera-cafe-express-yelmo-ce5107-bba-italiana-19-bar-marron-con-vapor-1-y-2-pocillos/p/MLA7476488",
+      priority: "alta"
+    },
+    {
+      id: "sabanas-queen",
+      name: "Juego de sábanas Queen color amarillo",
+      category: "hogar",
+      price: "$79.990",
+      image: "https://http2.mlstatic.com/D_Q_NP_603293-MLA97655612210_112025-F.jpg",
+      url: "https://www.mercadolibre.com.ar/juego-de-sabanas-queen-size-suavidad-duradera-colores-lisos-color-amarillo/p/MLA54814684",
+      priority: "media"
+    },
+    {
+      id: "toallas-visita",
+      name: "Set de 2 toallas de visita 30x50 cm gris",
+      category: "bano",
+      price: "$14.990",
+      image: "https://http2.mlstatic.com/D_Q_NP_843257-MLA109904899816_042026-F.jpg",
+      url: "https://www.mercadolibre.com.ar/set-de-2-toallas-de-visita-30x50cm-algodon-400gm2-gris/p/MLA68524069",
       priority: "baja"
+    },
+    {
+      id: "toalla-toallon",
+      name: "Juego de toalla y toallón algodón 500 g",
+      category: "bano",
+      price: "$48.490",
+      image: "https://http2.mlstatic.com/D_Q_NP_881324-MLA111697206259_052026-F.jpg",
+      url: "https://www.mercadolibre.com.ar/juego-de-toalla-y-toallon-liso-algodon-500-g/up/MLAU3961734649",
+      priority: "media"
     },
     {
       id: "accesorios-bano-jazak",
@@ -211,7 +228,7 @@ window.CONFIG = {
     {
       id: "posavasos-eevee",
       name: "Posavasos de madera Pokémon Eevee x9",
-      category: "living",
+      category: "cocina",
       price: "$32.899",
       image: "https://http2.mlstatic.com/D_Q_NP_608982-MLA104308205433_012026-F.jpg",
       url: "https://www.mercadolibre.com.ar/posavaso-de-madera-brillante-pokemon-eevee-estilo-gamer-x9/up/MLAU3175636666",
@@ -220,13 +237,11 @@ window.CONFIG = {
   ],
   contribuciones: [
     {
-      id: "lavarropas-bgh",
-      name: "Lavarropas BGH Inverter 6 kg",
+      id: "aporte-general",
+      name: "Un aporte para el hogar",
       description:
-        "Carga frontal, gris oscuro — el electro que más nos falta para armar el hogar. Si querés sumarte, tu aporte va directo a comprar este modelo.",
-      meta: "6 kg · Inverter · A+++",
-      image: "assets/productos/lavarropas-bgh.webp",
-      url: "https://www.mercadolibre.com.ar/lavarropas-bgh-inverter-carga-frontal-6kg-bwfe06s24ar-color-gris-oscuro/p/MLA51863938"
+        "Si preferís no elegir algo de la wishlist, podés sumarte con un monto libre. Lo usamos para seguir armando la casa.",
+      meta: "Aporte libre"
     }
   ]
 };
