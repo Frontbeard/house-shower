@@ -160,7 +160,7 @@ function applyConfig() {
   const letterDate = document.getElementById("letter-date");
   if (letterDate) letterDate.textContent = `${c.eventDate?.replace(" de 2026", "") || "25 de julio"} a las ${c.eventTime || "16 hs"}`;
 
-  document.title = `${c.hosts} · House Shower`;
+  document.title = `${c.hosts} | House Shower`;
 
   const maps = document.getElementById("maps-link");
   if (maps && c.mapsUrl) maps.href = c.mapsUrl;
@@ -658,9 +658,37 @@ function setupNav() {
   const links = document.querySelectorAll("[data-nav]");
 
   const sectionIds = ["inicio", "invitacion", "hogar", "galeria", "regalos", "ubicacion", "rsvp"];
+  let lastScrollY = window.scrollY;
+  let scrollTicking = false;
+
+  const syncNavVisibility = () => {
+    if (!nav?.classList.contains("is-visible")) return;
+
+    const y = window.scrollY;
+    const delta = y - lastScrollY;
+
+    if (y <= 48) {
+      nav.classList.remove("nav--hidden");
+    } else if (delta > 6) {
+      nav.classList.add("nav--hidden");
+    } else if (delta < -6) {
+      nav.classList.remove("nav--hidden");
+    }
+
+    lastScrollY = y;
+  };
 
   const onScroll = () => {
-    nav?.classList.toggle("nav--scrolled", window.scrollY > 20);
+    const y = window.scrollY;
+    nav?.classList.toggle("nav--scrolled", y > 20);
+
+    if (!scrollTicking) {
+      scrollTicking = true;
+      requestAnimationFrame(() => {
+        syncNavVisibility();
+        scrollTicking = false;
+      });
+    }
 
     let current = "inicio";
     const offset = 100;
@@ -674,6 +702,12 @@ function setupNav() {
       a.classList.toggle("is-active", href === current);
     });
   };
+
+  links.forEach((a) => {
+    a.addEventListener("click", () => {
+      nav?.classList.remove("nav--hidden");
+    });
+  });
 
   window.addEventListener("scroll", onScroll, { passive: true });
   onScroll();
@@ -837,10 +871,17 @@ function updateWishMoreButton(total) {
   const needsClamp = mobile && total > WISH_MOBILE_LIMIT;
 
   grid.classList.toggle("is-expanded", !needsClamp || wishlistExpanded);
-  btn.hidden = !needsClamp;
 
-  if (!needsClamp) return;
+  if (!needsClamp) {
+    wishlistExpanded = false;
+    btn.hidden = true;
+    btn.setAttribute("aria-hidden", "true");
+    btn.removeAttribute("aria-expanded");
+    return;
+  }
 
+  btn.hidden = false;
+  btn.setAttribute("aria-hidden", "false");
   const hiddenCount = total - WISH_MOBILE_LIMIT;
   btn.setAttribute("aria-expanded", wishlistExpanded ? "true" : "false");
   btn.textContent = wishlistExpanded ? "Ver menos" : `Ver más (${hiddenCount})`;
@@ -1260,7 +1301,7 @@ function setupRsvp() {
       `Personas: ${guests[d.get("guests")]}`,
       d.get("message") ? `Mensaje: ${d.get("message")}` : "",
       `📍 ${c?.address}`,
-      `📅 ${c?.eventDate} · ${c?.eventTime}`
+      `📅 ${c?.eventDate}, ${c?.eventTime}`
     ].filter(Boolean).join("\n");
 
     window.open(`https://wa.me/${c?.whatsappNumber}?text=${encodeURIComponent(text)}`, "_blank");

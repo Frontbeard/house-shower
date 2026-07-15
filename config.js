@@ -1,20 +1,20 @@
 window.CONFIG = {
   hosts: "Martina & Lucas",
   welcomeMessage:
-    "Vení a conocer nuestro nuevo hogar — tarde informal, con mate y buena charla.",
+    "Vení a conocer nuestro nuevo hogar. Una tarde informal, con mate y buena charla.",
   eventDate: "Sábado 25 de julio de 2026",
   eventTime: "16:00 hs",
   eventISO: "2026-07-25T16:00:00-03:00",
   address: "Av. La Plata 1930, 6° \"C\"",
   neighborhood: "Boedo, Capital Federal",
-  mapNote: "6° piso · Departamento C",
+  mapNote: "6° piso, departamento C",
   mapsUrl: "https://www.google.com/maps/search/?api=1&query=Av.+La+Plata+1930,+Boedo,+CABA",
   mapsEmbed: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3281.847!2d-58.4189!3d-34.6338!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bccacf0f4f4f4f%3A0x0!2sAv.+La+Plata+1930%2C+CABA!5e0!3m2!1ses!2sar!4v1",
   visit: {
     eyebrow: "En casa",
     title: "Una merienda en casa",
     intro:
-      "Pasá a conocer el depto, tomar unos mates y compartir la merienda con nosotros. Es una visita de la tarde: informal y con toda la buena onda.",
+      "Pasá a conocer el depto, tomar unos mates y compartir la merienda con nosotros. Es una visita de la tarde, informal y con toda la buena onda.",
     note: "Si llegás un ratito antes o después de las 16, tranqui. Contamos con vos para la merienda.",
     highlights: [
       { icon: "mate", title: "Mate y living", text: "Nos acomodamos, charlamos y te sentís en casa." },
@@ -33,7 +33,7 @@ window.CONFIG = {
     cvu: "0000003100014771927048",
     alias: "martina.reno.mp",
     banco: "Mercado Pago",
-    nota: "Transferí el monto que quieras. Cualquier aporte suma — ¡gracias!"
+    nota: "Transferí el monto que quieras. Cualquier aporte suma. ¡Gracias!"
   },
   musicUrl: "",
   heroPhoto: "assets/fotos/IMAGEN-11.jpeg",

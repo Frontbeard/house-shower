@@ -14,8 +14,8 @@
   --shadow-sm: 0 4px 24px rgba(50, 55, 40, 0.06);
   --shadow: 0 16px 48px rgba(50, 55, 40, 0.1);
   --shadow-lg: 0 32px 80px rgba(50, 55, 40, 0.14);
-  --font-display: "Cormorant Garamond", Georgia, serif;
-  --font-ui: "Inter", system-ui, sans-serif;
+  --font-display: "Libre Baskerville", "Times New Roman", Times, serif;
+  --font-ui: "Figtree", system-ui, sans-serif;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --radius: 16px;
   --radius-lg: 24px;
@@ -127,8 +127,8 @@ strong { font-weight: 600; color: var(--ink); }
   transform: translateY(8%);
 }
 .envelope-scene__hint {
-  font-family: var(--font-display); font-size: 1.15rem; font-style: italic;
-  color: var(--ink-muted); letter-spacing: 0.04em;
+  font-family: var(--font-display); font-size: 1.1rem; font-weight: 500;
+  color: var(--ink-muted); letter-spacing: 0.02em;
   animation: hintPulse 2.8s ease-in-out infinite;
   pointer-events: none;
   user-select: none;
@@ -222,11 +222,15 @@ strong { font-weight: 600; color: var(--ink); }
   padding: max(var(--nav-offset), env(safe-area-inset-top, 0px)) max(0.65rem, env(safe-area-inset-right, 0px)) 0 max(0.65rem, env(safe-area-inset-left, 0px));
   pointer-events: none;
   transform: translateY(calc(-100% - var(--nav-offset)));
-  transition: transform 0.65s var(--ease);
+  transition: transform 0.35s var(--ease);
 }
 .nav.is-visible {
   transform: translateY(0);
   pointer-events: auto;
+}
+.nav.is-visible.nav--hidden {
+  transform: translateY(calc(-100% - var(--nav-offset)));
+  pointer-events: none;
 }
 .nav__shell {
   max-width: 36rem; margin: 0 auto;
@@ -364,13 +368,14 @@ strong { font-weight: 600; color: var(--ink); }
   text-transform: uppercase; color: var(--gold); margin-bottom: 0.75rem;
 }
 .hero__title {
-  font-family: var(--font-display); font-size: clamp(2.8rem, 10vw, 5rem);
-  font-weight: 600; line-height: 1.05; width: 100%;
+  font-family: var(--font-display); font-size: clamp(2.1rem, 8.2vw, 5rem);
+  font-weight: 700; line-height: 1.05; width: 100%;
+  white-space: nowrap;
   text-shadow: 0 4px 32px rgba(0,0,0,0.3); margin-bottom: 0.85rem;
 }
 .hero__welcome {
-  font-family: var(--font-display); font-size: clamp(1.15rem, 2.4vw, 1.4rem);
-  font-style: italic; opacity: 0.94;
+  font-family: var(--font-ui); font-size: clamp(1.05rem, 2.3vw, 1.25rem);
+  font-weight: 400; opacity: 0.94;
   max-width: 28em; line-height: 1.4;
   margin: 0 auto;
   text-wrap: balance;
@@ -466,10 +471,11 @@ main .section:nth-of-type(3n)::before {
 }
 .section-head { text-align: center; max-width: 52ch; margin: 0 auto 2.5rem; color: var(--ink-soft); }
 .section-head h2 {
-  font-family: var(--font-display); font-size: clamp(1.75rem, 4vw, 2.25rem);
-  font-weight: 600; color: var(--ink); margin-bottom: 0.65rem;
+  font-family: var(--font-display); font-size: clamp(1.2rem, 4.6vw, 2.25rem);
+  font-weight: 700; color: var(--ink); margin-bottom: 0.65rem;
+  white-space: nowrap;
 }
-h2 { font-family: var(--font-display); font-size: 1.35rem; font-weight: 600; }
+h2 { font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; }
 .muted { color: var(--ink-muted); font-size: 0.9rem; }
 
 .card {
@@ -484,9 +490,9 @@ h2 { font-family: var(--font-display); font-size: 1.35rem; font-weight: 600; }
 .detail.card:hover,
 .card.reveal:hover { transform: translateY(-3px); }
 .wish-card:hover { transform: translateY(-4px); }
-.salute { font-family: var(--font-display); font-size: 1.75rem; font-style: italic; color: var(--gold-deep); margin-bottom: 1rem; }
-.prose { color: var(--ink-soft); margin-bottom: 1rem; font-family: var(--font-display); font-size: 1.15rem; line-height: 1.75; }
-.sign { font-family: var(--font-display); font-size: 1.35rem; font-style: italic; color: var(--gold-deep); text-align: right; margin-top: 1.25rem; }
+.salute { font-family: var(--font-display); font-size: 1.65rem; font-weight: 600; color: var(--gold-deep); margin-bottom: 1rem; }
+.prose { color: var(--ink-soft); margin-bottom: 1rem; font-family: var(--font-ui); font-size: 1.05rem; line-height: 1.7; }
+.sign { font-family: var(--font-display); font-size: 1.3rem; font-weight: 600; color: var(--gold-deep); text-align: right; margin-top: 1.25rem; }
 
 .countdown { text-align: center; margin-top: 1.5rem; }
 .countdown__label { font-family: var(--font-display); font-size: 1.2rem; margin-bottom: 1rem; }
@@ -521,8 +527,8 @@ h2 { font-family: var(--font-display); font-size: 1.35rem; font-weight: 600; }
 
 /* Visit — En casa */
 .visit-lead {
-  font-family: var(--font-display);
-  font-size: clamp(1.05rem, 2.2vw, 1.2rem);
+  font-family: var(--font-ui);
+  font-size: clamp(1rem, 2.1vw, 1.12rem);
   line-height: 1.65;
   color: var(--ink-soft);
   max-width: 36rem;
@@ -660,10 +666,14 @@ h2 { font-family: var(--font-display); font-size: 1.35rem; font-weight: 600; }
   margin-bottom: 1.5rem;
 }
 .btn--wish-more {
-  display: flex;
-  width: min(100%, 18rem);
-  margin: 0 auto 1.5rem;
+  display: none;
+  width: min(100%, 16rem);
+  margin: 0.25rem auto 1.5rem;
   gap: 0.4rem;
+  justify-content: center;
+}
+.btn--wish-more[hidden] {
+  display: none !important;
 }
 .wish-card { overflow: hidden; padding: 0; transition: transform 0.35s var(--ease); }
 .wish-card:hover { transform: translateY(-4px); }
@@ -797,7 +807,10 @@ h2 { font-family: var(--font-display); font-size: 1.35rem; font-weight: 600; }
 .contrib-transfer__all { width: 100%; justify-content: center; margin-bottom: 0.15rem; }
 .contrib-transfer__note { margin-top: 0.75rem; font-size: 0.82rem; color: var(--ink-muted); line-height: 1.55; text-align: center; }
 
-.rsvp__title { font-family: var(--font-display); font-size: 1.75rem; margin-bottom: 0.35rem; text-align: center; }
+.rsvp__title {
+  font-family: var(--font-display); font-size: clamp(1.35rem, 5vw, 1.75rem);
+  margin-bottom: 0.35rem; text-align: center; white-space: nowrap;
+}
 .rsvp__sub { color: var(--ink-soft); margin-bottom: 1.5rem; text-align: center; }
 .form { display: flex; flex-direction: column; gap: 0.85rem; }
 .form__field { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.82rem; font-weight: 500; }
@@ -1023,10 +1036,13 @@ body.envelope-done .particles { opacity: 0.35; transition: opacity 1.2s ease; }
     width: 100%;
     max-width: calc(100vw - 0.8rem);
     margin: 0 auto;
-    padding: 0.32rem 0.35rem;
-    gap: 0.2rem;
+    padding: 0.32rem 0.4rem;
+    gap: 0.55rem;
     min-height: var(--nav-h);
     box-shadow: 0 2px 12px rgba(50, 55, 40, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  }
+  .nav__brand {
+    margin-right: 0.15rem;
   }
   .nav__monogram {
     min-width: 2.15rem; height: 2.15rem; padding: 0 0.35rem;
@@ -1035,11 +1051,12 @@ body.envelope-done .particles { opacity: 0.35; transition: opacity 1.2s ease; }
   .nav__links {
     display: flex;
     flex: 1 1 auto;
-    justify-content: space-between;
-    gap: 0.1rem;
+    justify-content: space-evenly;
+    gap: 0.2rem;
     min-width: 0;
     overflow: visible;
-    padding: 0;
+    padding: 0 0.1rem;
+    margin-left: 0.1rem;
   }
   .nav__links a[href="#galeria"] { display: inline-flex; }
   .nav__icon {
@@ -1094,8 +1111,7 @@ body.envelope-done .particles { opacity: 0.35; transition: opacity 1.2s ease; }
     padding: calc(var(--nav-total) + 0.85rem) 1.1rem 1.75rem;
   }
   .hero__title {
-    font-size: clamp(2.15rem, 10.5vw, 3.1rem);
-    word-wrap: break-word;
+    font-size: clamp(1.85rem, 9vw, 2.75rem);
   }
   .hero__welcome { font-size: 1.05rem; max-width: 22em; }
   .hero__label { font-size: 0.6rem; letter-spacing: 0.22em; }
@@ -1107,7 +1123,7 @@ body.envelope-done .particles { opacity: 0.35; transition: opacity 1.2s ease; }
   }
   .eyebrow { font-size: 0.75rem; margin-bottom: 1.15rem; letter-spacing: 0.18em; }
   .section-head { margin-bottom: 1.5rem; padding: 0 0.15rem; }
-  .section-head h2 { font-size: clamp(1.4rem, 5.5vw, 1.65rem); }
+  .section-head h2 { font-size: clamp(1.15rem, 5.2vw, 1.55rem); }
   .section-head p { font-size: 0.92rem; }
 
   .card { padding: 1.25rem 1.1rem; border-radius: var(--radius-lg); }
@@ -1190,7 +1206,12 @@ body.envelope-done .particles { opacity: 0.35; transition: opacity 1.2s ease; }
   .wish-card__acts .btn { width: 100%; justify-content: center; }
   .wish-card__img { height: 170px; }
   .wish-card h3 { font-size: 0.98rem; line-height: 1.35; }
-  .btn--wish-more { width: 100%; max-width: none; }
+  .btn--wish-more:not([hidden]) {
+    display: flex;
+    width: min(100%, 16rem);
+    margin-left: auto;
+    margin-right: auto;
+  }
   .contrib-shell { max-width: 100%; }
   .contrib-feature__body { padding: 1.1rem 1rem 1.2rem; }
   .contrib-transfer__value {
@@ -1201,7 +1222,7 @@ body.envelope-done .particles { opacity: 0.35; transition: opacity 1.2s ease; }
   .contrib-transfer__row { grid-template-columns: 1fr; gap: 0.25rem; }
   .btn--center { width: 100%; }
 
-  .rsvp__title { font-size: 1.4rem; }
+  .rsvp__title { font-size: clamp(1.25rem, 5.5vw, 1.4rem); }
   .rsvp__sub { font-size: 0.92rem; }
   .chip-radio { display: flex; margin: 0 0 0.4rem; }
   .chip-radio span { width: 100%; text-align: center; padding: 0.55rem 1rem; }
@@ -1257,20 +1278,23 @@ body.envelope-done .particles { opacity: 0.35; transition: opacity 1.2s ease; }
 @media (max-width: 380px) {
   :root { --nav-h: 48px; }
 
-  .nav__shell { padding: 0.28rem 0.28rem; gap: 0.12rem; }
+  .nav__shell { padding: 0.28rem 0.32rem; gap: 0.4rem; }
+  .nav__brand { margin-right: 0.05rem; }
   .nav__monogram {
     min-width: 1.95rem; height: 1.95rem; padding: 0 0.28rem;
     font-size: 0.7rem;
   }
+  .nav__links { gap: 0.12rem; margin-left: 0; padding: 0; }
   .nav__links a,
   .nav__cta,
   .nav__music {
-    min-width: 1.9rem;
-    max-width: 2.2rem;
+    min-width: 1.85rem;
+    max-width: 2.1rem;
     height: 2rem !important;
   }
   .nav__icon { width: 1.05rem; height: 1.05rem; }
-  .hero__title { font-size: 1.95rem; }
+  .hero__title { font-size: clamp(1.55rem, 8.5vw, 1.85rem); }
+  .section-head h2 { font-size: clamp(1.05rem, 4.8vw, 1.25rem); }
   .hero__welcome { font-size: 0.98rem; }
   .countdown__unit { padding: 0.45rem 0.2rem; }
   .countdown__unit span { font-size: 0.52rem; }
