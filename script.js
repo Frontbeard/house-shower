@@ -1,4 +1,6 @@
-const SESSION_KEY = "house-shower-opened";
+const INVITATION_VARIANT =
+  new URLSearchParams(window.location.search).get("grupo") || "familia";
+const SESSION_KEY = `house-shower-opened-${INVITATION_VARIANT}`;
 const RESERVATIONS_TABLE = "house_shower_reservations";
 
 /* ─── Utils ─── */
@@ -127,6 +129,26 @@ async function clearReservation(id, name) {
 }
 
 /* ─── Config ─── */
+function applyInvitationVariant() {
+  const base = window.CONFIG;
+  const variant = base?.variants?.[INVITATION_VARIANT];
+  if (!base || !variant) return;
+
+  window.CONFIG = {
+    ...base,
+    ...variant,
+    visit: {
+      ...base.visit,
+      ...variant.visit
+    },
+    invitation: {
+      ...base.invitation,
+      ...variant.invitation
+    }
+  };
+  document.documentElement.dataset.group = INVITATION_VARIANT;
+}
+
 function applyConfig() {
   const c = window.CONFIG;
   if (!c) return;
@@ -157,8 +179,17 @@ function applyConfig() {
   const welcome = document.getElementById("welcome-message");
   if (welcome && c.welcomeMessage) welcome.textContent = c.welcomeMessage;
 
-  const letterDate = document.getElementById("letter-date");
-  if (letterDate) letterDate.textContent = `${c.eventDate?.replace(" de 2026", "") || "25 de julio"} a las ${c.eventTime || "16 hs"}`;
+  const invitation = c.invitation;
+  const salute = document.getElementById("letter-salute");
+  const letterBody = document.getElementById("letter-body");
+  const letterPlan = document.getElementById("letter-plan");
+  const countdownLabel = document.getElementById("countdown-label");
+  if (salute && invitation?.salute) salute.textContent = invitation.salute;
+  if (letterBody && invitation?.body) letterBody.innerHTML = invitation.body;
+  if (letterPlan && invitation?.plan) letterPlan.innerHTML = invitation.plan;
+  if (countdownLabel && invitation?.countdownLabel) {
+    countdownLabel.textContent = invitation.countdownLabel;
+  }
 
   document.title = `${c.hosts} | House Shower`;
 
@@ -1364,6 +1395,7 @@ function setupMusic() {
 
 /* ─── Init ─── */
 document.addEventListener("DOMContentLoaded", async () => {
+  applyInvitationVariant();
   applyConfig();
   initSupabase();
   initParticles();

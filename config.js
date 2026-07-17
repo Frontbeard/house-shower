@@ -23,6 +23,14 @@ window.CONFIG = {
       { icon: "toast", title: "Brindis", text: "Una copa por este capítulo nuevo." }
     ]
   },
+  invitation: {
+    salute: "Queridos,",
+    body:
+      "Después de tantos años compartiendo momentos, risas y mates, llegó el momento de dar un paso más. <strong>En julio nos mudamos</strong> a Boedo y queremos inaugurar este capítulo con ustedes.",
+    plan:
+      "Los esperamos el <strong>sábado 25 de julio a las 16 hs</strong> a merendar, charlar y, sobre todo, <em>conocer nuestro nuevo hogar</em>.",
+    countdownLabel: "Faltan para la tarde"
+  },
   whatsappNumber: "5491152400334",
   supabaseUrl: "https://eqztjotyfhhhcbjzqfjt.supabase.co",
   supabaseAnonKey:
@@ -243,5 +251,35 @@ window.CONFIG = {
         "Si preferís no elegir algo de la wishlist, podés sumarte con un monto libre. Lo usamos para seguir armando la casa.",
       meta: "Aporte libre"
     }
-  ]
+  ],
+  variants: {
+    amigos: {
+      welcomeMessage:
+        "Vengan a conocer nuestro nuevo hogar. Una noche entre amigos para comer algo, brindar y pasarla bien.",
+      eventDate: "Viernes 24 de julio de 2026",
+      eventTime: "A partir de las 20:30 hs",
+      eventISO: "2026-07-24T20:30:00-03:00",
+      visit: {
+        eyebrow: "Entre amigos",
+        title: "Una noche entre amigos",
+        intro:
+          "Queremos estrenar el depto con ustedes. Los esperamos para comer algo, tomar unos tragos y brindar juntos por esta nueva etapa.",
+        note: "Los esperamos a partir de las 20:30. Vengan con ganas de pasarla bien.",
+        highlights: [
+          { icon: "food", title: "Algo rico", text: "Preparamos cosas para comer y compartir." },
+          { icon: "toast", title: "Tragos y brindis", text: "Levantamos la copa por esta nueva etapa." },
+          { icon: "home", title: "El depto", text: "Les mostramos los rincones que fuimos armando." },
+          { icon: "mate", title: "Charla y música", text: "Una noche relajada para disfrutar entre amigos." }
+        ]
+      },
+      invitation: {
+        salute: "Amigos,",
+        body:
+          "Queremos festejar con ustedes este nuevo capítulo. Nos mudamos a Boedo y nos encantaría estrenar la casa rodeados de amigos.",
+        plan:
+          "Los esperamos el <strong>viernes 24 de julio a partir de las 20:30 hs</strong> para compartir algo rico, brindar y <em>conocer nuestro nuevo hogar</em>.",
+        countdownLabel: "Faltan para la noche"
+      }
+    }
+  }
 };
