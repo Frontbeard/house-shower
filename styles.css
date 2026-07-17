@@ -381,6 +381,19 @@ strong { font-weight: 600; color: var(--ink); }
   text-wrap: balance;
 }
 
+html[data-group="amigos"] .hero__content {
+  align-items: center;
+  text-align: center;
+}
+html[data-group="amigos"] .hero__label,
+html[data-group="amigos"] .hero__title,
+html[data-group="amigos"] .hero__welcome {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
 .wrap { max-width: 1040px; margin: 0 auto; padding: 0 1.25rem; width: 100%; }
 .wrap--narrow { max-width: 680px; }
 .section {
