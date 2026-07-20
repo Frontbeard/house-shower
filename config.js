@@ -99,21 +99,21 @@ window.CONFIG = {
       priority: "media"
     },
     {
-      id: "cubiertos-tramontina",
-      name: "Set 24 cubiertos Tramontina Dynamic madera",
-      category: "cocina",
-      price: "$55.090",
-      image: "https://http2.mlstatic.com/D_Q_NP_782540-MLA69941898788_062023-F.jpg",
-      url: "https://www.mercadolibre.com.ar/set-24-cubiertos-tramontina-dynamic-mango-de-madera-original/up/MLAU228132065",
+      id: "cajas-rattan",
+      name: "Cajas organizadoras símil rattan XL pack x3",
+      category: "hogar",
+      price: "$30.520",
+      image: "https://acdn-us.mitiendanube.com/stores/006/778/860/products/rattannegro1-624c491eb19d0fbf3417831751133008-640-0.webp",
+      url: "https://articulo.mercadolibre.com.ar/MLA-1153818506-caja-organizadora-simil-rattan-grande-xl-pack-por-3-oferta-_JM",
       priority: "alta"
     },
     {
-      id: "tender-global",
-      name: "Tender plegable extensible 1,5 m Global Sanitarios",
-      category: "hogar",
-      price: "$32.999",
-      image: "https://http2.mlstatic.com/D_Q_NP_631164-MLA96413220685_102025-F.jpg",
-      url: "https://www.mercadolibre.com.ar/tender-global-sanitarios-aluminio-plegable-extensible-15m-con-alas/p/MLA60854179",
+      id: "copas-bohemia",
+      name: "Set 6 copas cristal Bohemia Crystalite Colibri 580 ml",
+      category: "cocina",
+      price: "$61.065",
+      image: "https://http2.mlstatic.com/D_Q_NP_706825-MLA95495402844_102025-F.jpg",
+      url: "https://www.mercadolibre.com.ar/set-6-copas-cristal-bohemia-vino-crystalite-colibri-580-ml/p/MLA22990838",
       priority: "media"
     },
     {
@@ -126,12 +126,12 @@ window.CONFIG = {
       priority: "media"
     },
     {
-      id: "bateria-hudson",
-      name: "Batería Hudson Olive antiadherente cerámica",
-      category: "cocina",
-      price: "$170.062",
-      image: "https://http2.mlstatic.com/D_Q_NP_812256-MLA96323933005_102025-F.jpg",
-      url: "https://www.mercadolibre.com.ar/bateria-hudson-olive-antiadherente-cocina-ceramica-premium/up/MLAU3091258151",
+      id: "espejo-gloa",
+      name: "Espejo redondo luz LED 50 cm Gloa regulable",
+      category: "bano",
+      price: "$104.208",
+      image: "https://acdn-us.mitiendanube.com/stores/004/755/118/products/3-5a109f75135de3f06e17782503976904-640-0.webp",
+      url: "https://www.mercadolibre.com.ar/espejo-redondo-luz-led-50-cm-gloa-luz-regulable-decoracion-blanco/p/MLA66911493",
       priority: "alta"
     },
     {
