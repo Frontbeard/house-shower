@@ -99,6 +99,15 @@ window.CONFIG = {
       priority: "media"
     },
     {
+      id: "cubiertos-tramontina",
+      name: "Set 24 cubiertos Tramontina Dynamic madera",
+      category: "cocina",
+      price: "$55.090",
+      image: "https://http2.mlstatic.com/D_Q_NP_782540-MLA69941898788_062023-F.jpg",
+      url: "https://www.mercadolibre.com.ar/set-24-cubiertos-tramontina-dynamic-mango-de-madera-original/up/MLAU228132065",
+      priority: "alta"
+    },
+    {
       id: "cajas-rattan",
       name: "Cajas organizadoras símil rattan XL pack x3",
       category: "hogar",
